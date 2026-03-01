@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Game Tết</title>
+<title>Hái Lộc Tri Thức</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
     overflow:hidden;
     font-family:Arial, sans-serif;
-    background:linear-gradient(to bottom,#ff758c,#ff3d6d);
+    background:linear-gradient(to bottom,#f8b6d2,#ff4d6d);
 }
 
 /* Đếm ngược */
@@ -25,82 +25,65 @@ body{
     z-index:5;
 }
 
+/* Khu vực chính */
+.scene{
+    position:relative;
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+}
+
 /* Cây đào */
 .tree{
-    position:absolute;
-    bottom:0;
-    left:50%;
-    transform:translateX(-50%);
-    width:260px;
-    height:360px;
-}
-
-.trunk{
-    position:absolute;
-    bottom:0;
-    left:115px;
-    width:30px;
-    height:170px;
-    background:linear-gradient(#5c3d2e,#3e2723);
-    border-radius:10px;
-}
-
-.leaves{
-    position:absolute;
-    bottom:140px;
-    width:260px;
-    height:220px;
-    background:radial-gradient(circle at 50% 40%,#ffc1e3,#ff69b4);
-    border-radius:50%;
-    animation:sway 5s infinite alternate ease-in-out;
-    box-shadow:0 0 30px rgba(255,105,180,0.6);
-}
-
-@keyframes sway{
-    from{transform:rotate(-2deg);}
-    to{transform:rotate(2deg);}
+    position:relative;
+    width:320px;
+    height:420px;
+    background:url("tree.jpg") no-repeat center;
+    background-size:contain;
 }
 
 /* Lì xì */
 .lixi{
     position:absolute;
-    width:55px;
-    height:80px;
-    transform-style:preserve-3d;
-    transition:transform .6s;
-}
-
-.lixi.open{
-    transform:rotateY(180deg);
-}
-
-.lixi.locked{
-    opacity:.5;
-    pointer-events:none;
-}
-
-.card{
-    position:absolute;
-    width:100%;
-    height:100%;
-    backface-visibility:hidden;
-    border-radius:8px;
+    width:45px;
+    height:65px;
+    background:linear-gradient(#ff0000,#b30000);
+    border-radius:6px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:bold;
-    font-size:14px;
-}
-
-.front{
-    background:linear-gradient(#ff0000,#b30000);
     color:gold;
+    font-weight:bold;
+    font-size:12px;
     box-shadow:0 4px 10px rgba(0,0,0,.4);
+    transition:.3s;
 }
 
-.back{
-    background:gold;
-    transform:rotateY(180deg);
+.lixi:hover{
+    transform:scale(1.1);
+}
+
+.lixi.locked{
+    opacity:.4;
+    pointer-events:none;
+}
+
+/* Bảng dưới */
+.board{
+    width:90%;
+    max-width:360px;
+    background:linear-gradient(#fff6d5,#ffd27f);
+    padding:15px;
+    border-radius:15px;
+    text-align:center;
+    margin-bottom:20px;
+    box-shadow:0 0 20px rgba(255,215,0,.7);
+    font-size:20px;
+    font-weight:bold;
+    color:#b30000;
 }
 
 /* Popup */
@@ -155,7 +138,7 @@ canvas{
 /* Thông báo */
 #message{
     position:fixed;
-    top:30%;
+    top:35%;
     width:100%;
     text-align:center;
     font-size:22px;
@@ -174,15 +157,16 @@ canvas{
 <div id="message"></div>
 <canvas id="fireworks"></canvas>
 
-<div class="tree">
-    <div class="trunk"></div>
-    <div class="leaves"></div>
+<div class="scene">
 
-    <div class="lixi" style="top:180px;left:50px"></div>
-    <div class="lixi" style="top:130px;left:130px"></div>
-    <div class="lixi" style="top:190px;left:180px"></div>
-    <div class="lixi" style="top:100px;left:90px"></div>
-    <div class="lixi" style="top:120px;left:200px"></div>
+    <div class="tree" id="tree">
+        <!-- Lì xì sẽ tạo bằng JS -->
+    </div>
+
+    <div class="board">
+        🌸 HÁI LỘC TRI THỨC 🌸
+    </div>
+
 </div>
 
 <div class="popup" id="popup">
@@ -193,7 +177,7 @@ canvas{
 
 <script>
 
-/* ===== HOA RƠI MƯỢT ===== */
+/* Hoa rơi */
 for(let i=0;i<25;i++){
     let f=document.createElement("div");
     f.className="flower";
@@ -202,24 +186,22 @@ for(let i=0;i<25;i++){
     document.body.appendChild(f);
 }
 
-/* ===== ĐẾM NGƯỢC ===== */
+/* Đếm ngược */
 function updateCountdown(){
     let now=new Date();
     let newYear=new Date(now.getFullYear()+1,0,1);
     let diff=newYear-now;
-
     let days=Math.floor(diff/(1000*60*60*24));
     let hours=Math.floor((diff/(1000*60*60))%24);
     let minutes=Math.floor((diff/1000/60)%60);
     let seconds=Math.floor((diff/1000)%60);
-
     document.getElementById("countdown").innerText=
     `Còn ${days} ngày ${hours} giờ ${minutes} phút ${seconds} giây đến năm mới`;
 }
 setInterval(updateCountdown,1000);
 updateCountdown();
 
-/* ===== LÌ XÌ ===== */
+/* Câu hỏi */
 const questions=[
 {q:"Tết ăn gì?",a:["Bánh chưng","Pizza"],c:0},
 {q:"Hoa Tết miền Bắc?",a:["Hoa đào","Hoa cúc"],c:0},
@@ -228,16 +210,21 @@ const questions=[
 {q:"Tết là dịp gì?",a:["Đoàn viên","Đi học"],c:0},
 ];
 
-document.querySelectorAll(".lixi").forEach((l,i)=>{
-    l.innerHTML=`
-        <div class="card front">LỘC</div>
-        <div class="card back"></div>`;
-    l.onclick=()=>openLixi(l,i);
+/* Tạo lì xì rải ngẫu nhiên */
+let tree=document.getElementById("tree");
+
+questions.forEach((q,index)=>{
+    let l=document.createElement("div");
+    l.className="lixi";
+    l.innerText="LỘC";
+    l.style.top=(50+Math.random()*250)+"px";
+    l.style.left=(20+Math.random()*260)+"px";
+    l.onclick=()=>openQuestion(l,index);
+    tree.appendChild(l);
 });
 
-function openLixi(el,index){
+function openQuestion(el,index){
     if(el.classList.contains("locked")) return;
-    el.classList.add("open");
     showQuestion(el,index);
 }
 
@@ -277,7 +264,7 @@ function checkAnswer(el,qIndex,aIndex){
     setTimeout(()=>msg.style.display="none",2500);
 }
 
-/* ===== PHÁO HOA MOBILE MƯỢT ===== */
+/* Pháo hoa */
 const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 
@@ -294,7 +281,7 @@ function launchFirework(){
     let x=Math.random()*canvas.width;
     let y=Math.random()*canvas.height/2;
 
-    for(let i=0;i<60;i++){
+    for(let i=0;i<70;i++){
         particles.push({
             x:x,
             y:y,
@@ -306,7 +293,7 @@ function launchFirework(){
 }
 
 function animate(){
-    ctx.fillStyle="rgba(0,0,0,0.1)";
+    ctx.fillStyle="rgba(0,0,0,0.08)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
     particles.forEach((p,i)=>{
