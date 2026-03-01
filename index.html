@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Cây Đào Lì Xì Tết</title>
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:linear-gradient(to bottom,#ffb6c1,#ff4d6d);
+    font-family:sans-serif;
+    text-align:center;
+}
+
+/* Cây đào */
+.tree{
+    position:absolute;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:300px;
+    height:400px;
+}
+
+.trunk{
+    position:absolute;
+    bottom:0;
+    left:130px;
+    width:40px;
+    height:200px;
+    background:#5c3d2e;
+}
+
+.leaves{
+    position:absolute;
+    bottom:150px;
+    left:0;
+    width:300px;
+    height:250px;
+    background:pink;
+    border-radius:50%;
+}
+
+/* Bao lì xì */
+.lixi{
+    position:absolute;
+    width:60px;
+    cursor:pointer;
+}
+
+#l1{top:180px; left:80px;}
+#l2{top:130px; left:150px;}
+#l3{top:200px; left:200px;}
+#l4{top:90px; left:60px;}
+#l5{top:120px; left:230px;}
+
+.lixi img{
+    width:100%;
+}
+
+/* Hoa rơi */
+.flower{
+    position:absolute;
+    top:-20px;
+    width:10px;
+    height:10px;
+    background:white;
+    border-radius:50%;
+    animation:fall linear infinite;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh);
+    }
+}
+
+/* Popup câu hỏi */
+.popup{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    z-index:10;
+}
+
+button{
+    margin:5px;
+    padding:5px 10px;
+}
+
+/* Thông báo */
+#message{
+    position:fixed;
+    top:20%;
+    width:100%;
+    font-size:30px;
+    font-weight:bold;
+    color:yellow;
+    display:none;
+}
+
+/* Pháo hoa */
+.firework{
+    position:absolute;
+    width:5px;
+    height:5px;
+    background:yellow;
+    border-radius:50%;
+    animation:explode 1s forwards;
+}
+
+@keyframes explode{
+    to{
+        transform:translate(
+            calc(100px - 200px * random()),
+            calc(100px - 200px * random())
+        );
+        opacity:0;
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="message"></div>
+
+<div class="tree">
+    <div class="trunk"></div>
+    <div class="leaves"></div>
+
+    <div class="lixi" id="l1" onclick="showQuestion(0)">
+        <img src="https://i.imgur.com/6XgFQYV.png">
+    </div>
+    <div class="lixi" id="l2" onclick="showQuestion(1)">
+        <img src="https://i.imgur.com/6XgFQYV.png">
+    </div>
+    <div class="lixi" id="l3" onclick="showQuestion(2)">
+        <img src="https://i.imgur.com/6XgFQYV.png">
+    </div>
+    <div class="lixi" id="l4" onclick="showQuestion(3)">
+        <img src="https://i.imgur.com/6XgFQYV.png">
+    </div>
+    <div class="lixi" id="l5" onclick="showQuestion(4)">
+        <img src="https://i.imgur.com/6XgFQYV.png">
+    </div>
+</div>
+
+<div class="popup" id="popup">
+    <h3 id="question"></h3>
+    <div id="answers"></div>
+    <button onclick="closePopup()">Đóng</button>
+</div>
+
+<script>
+// Hoa đào rơi
+for(let i=0;i<30;i++){
+    let f=document.createElement("div");
+    f.className="flower";
+    f.style.left=Math.random()*100+"vw";
+    f.style.animationDuration=3+Math.random()*5+"s";
+    document.body.appendChild(f);
+}
+
+// Câu hỏi
+const questions=[
+{
+q:"Tết năm nay là năm con gì?",
+a:["Rồng","Mèo","Hổ"],
+correct:0
+},
+{
+q:"Tết ăn bánh gì?",
+a:["Bánh chưng","Pizza","Hamburger"],
+correct:0
+},
+{
+q:"Màu của lì xì là gì?",
+a:["Đỏ","Xanh","Đen"],
+correct:0
+},
+{
+q:"Chúc Tết thường nói gì?",
+a:["Chúc mừng năm mới","Buồn ngủ quá","Đi ngủ thôi"],
+correct:0
+},
+{
+q:"Hoa đặc trưng miền Bắc ngày Tết?",
+a:["Hoa đào","Hoa hồng","Hoa lan"],
+correct:0
+}
+];
+
+function showQuestion(index){
+    document.getElementById("popup").style.display="block";
+    document.getElementById("question").innerText=questions[index].q;
+    let ansDiv=document.getElementById("answers");
+    ansDiv.innerHTML="";
+    questions[index].a.forEach((ans,i)=>{
+        let btn=document.createElement("button");
+        btn.innerText=ans;
+        btn.onclick=()=>checkAnswer(index,i);
+        ansDiv.appendChild(btn);
+    });
+}
+
+function closePopup(){
+    document.getElementById("popup").style.display="none";
+}
+
+function checkAnswer(qIndex,aIndex){
+    closePopup();
+    let msg=document.getElementById("message");
+    msg.style.display="block";
+
+    if(aIndex===questions[qIndex].correct){
+        msg.innerText=" Chúc Mừng Năm Mới ";
+        fireworkEffect();
+    }else{
+        msg.innerText="Ahihi đồ ngốc ";
+    }
+
+    setTimeout(()=>{msg.style.display="none";},3000);
+}
+
+function fireworkEffect(){
+    for(let i=0;i<50;i++){
+        let f=document.createElement("div");
+        f.className="firework";
+        f.style.left=Math.random()*100+"vw";
+        f.style.top=Math.random()*100+"vh";
+        document.body.appendChild(f);
+        setTimeout(()=>f.remove(),1000);
+    }
+}
+</script>
+
+</body>
+</html>
