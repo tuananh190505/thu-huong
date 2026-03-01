@@ -2,80 +2,118 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Cây Đào Lì Xì Tết</title>
+<title>Mini Game Tết 3D</title>
+
 <style>
 body{
     margin:0;
     overflow:hidden;
-    background:linear-gradient(to bottom,#ffb6c1,#ff4d6d);
+    background:linear-gradient(to bottom,#ff9a9e,#ff4d6d);
     font-family:sans-serif;
-    text-align:center;
+    perspective:1000px;
 }
 
-/* Cây đào */
+/* Đếm ngược */
+#countdown{
+    position:fixed;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:22px;
+    color:white;
+    font-weight:bold;
+}
+
+/* Cây đào 3D */
 .tree{
     position:absolute;
     bottom:0;
     left:50%;
-    transform:translateX(-50%);
-    width:300px;
-    height:400px;
+    transform:translateX(-50%) rotateX(10deg);
+    width:350px;
+    height:450px;
 }
 
 .trunk{
     position:absolute;
     bottom:0;
-    left:130px;
-    width:40px;
-    height:200px;
+    left:160px;
+    width:30px;
+    height:220px;
     background:#5c3d2e;
+    border-radius:10px;
 }
 
 .leaves{
     position:absolute;
-    bottom:150px;
-    left:0;
-    width:300px;
-    height:250px;
-    background:pink;
+    bottom:180px;
+    width:350px;
+    height:280px;
+    background:radial-gradient(circle,pink 40%,#ff69b4);
     border-radius:50%;
+    animation:sway 4s infinite alternate ease-in-out;
 }
 
-/* Bao lì xì */
+@keyframes sway{
+    from{transform:rotate(-2deg);}
+    to{transform:rotate(2deg);}
+}
+
+/* Lì xì */
 .lixi{
     position:absolute;
-    width:60px;
+    width:70px;
+    height:100px;
+    transform-style:preserve-3d;
+    transition:transform 0.6s;
     cursor:pointer;
 }
 
-#l1{top:180px; left:80px;}
-#l2{top:130px; left:150px;}
-#l3{top:200px; left:200px;}
-#l4{top:90px; left:60px;}
-#l5{top:120px; left:230px;}
-
-.lixi img{
-    width:100%;
+.lixi.open{
+    transform:rotateY(180deg);
 }
 
-/* Hoa rơi */
-.flower{
+.lixi.locked{
+    opacity:0.4;
+    pointer-events:none;
+}
+
+.card{
     position:absolute;
-    top:-20px;
-    width:10px;
-    height:10px;
-    background:white;
-    border-radius:50%;
-    animation:fall linear infinite;
+    width:100%;
+    height:100%;
+    backface-visibility:hidden;
+    border-radius:10px;
 }
 
-@keyframes fall{
-    to{
-        transform:translateY(100vh);
-    }
+.front{
+    background:red;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:gold;
+    font-weight:bold;
+    font-size:20px;
 }
 
-/* Popup câu hỏi */
+.back{
+    background:gold;
+    transform:rotateY(180deg);
+}
+
+/* Rung */
+.shake{
+    animation:shake 0.3s;
+}
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    50%{transform:translateX(5px);}
+    75%{transform:translateX(-5px);}
+    100%{transform:translateX(0);}
+}
+
+/* Popup */
 .popup{
     display:none;
     position:fixed;
@@ -84,81 +122,85 @@ body{
     transform:translate(-50%,-50%);
     background:white;
     padding:20px;
-    border-radius:10px;
+    border-radius:15px;
     z-index:10;
 }
 
 button{
     margin:5px;
-    padding:5px 10px;
+    padding:6px 12px;
 }
 
-/* Thông báo */
+/* Pháo hoa canvas */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+
+/* Hoa rơi */
+.flower{
+    position:absolute;
+    top:-20px;
+    width:8px;
+    height:8px;
+    background:white;
+    border-radius:50%;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(100vh);}
+}
+
 #message{
     position:fixed;
-    top:20%;
+    top:30%;
     width:100%;
-    font-size:30px;
-    font-weight:bold;
+    text-align:center;
+    font-size:35px;
     color:yellow;
+    font-weight:bold;
     display:none;
-}
-
-/* Pháo hoa */
-.firework{
-    position:absolute;
-    width:5px;
-    height:5px;
-    background:yellow;
-    border-radius:50%;
-    animation:explode 1s forwards;
-}
-
-@keyframes explode{
-    to{
-        transform:translate(
-            calc(100px - 200px * random()),
-            calc(100px - 200px * random())
-        );
-        opacity:0;
-    }
 }
 </style>
 </head>
+
 <body>
 
+<div id="countdown"></div>
 <div id="message"></div>
+<canvas id="fireworks"></canvas>
+
+<audio autoplay loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
 <div class="tree">
     <div class="trunk"></div>
     <div class="leaves"></div>
 
-    <div class="lixi" id="l1" onclick="showQuestion(0)">
-        <img src="https://i.imgur.com/6XgFQYV.png">
-    </div>
-    <div class="lixi" id="l2" onclick="showQuestion(1)">
-        <img src="https://i.imgur.com/6XgFQYV.png">
-    </div>
-    <div class="lixi" id="l3" onclick="showQuestion(2)">
-        <img src="https://i.imgur.com/6XgFQYV.png">
-    </div>
-    <div class="lixi" id="l4" onclick="showQuestion(3)">
-        <img src="https://i.imgur.com/6XgFQYV.png">
-    </div>
-    <div class="lixi" id="l5" onclick="showQuestion(4)">
-        <img src="https://i.imgur.com/6XgFQYV.png">
-    </div>
+    <div class="lixi" style="top:200px;left:80px" onclick="clickLixi(this,0)"></div>
+    <div class="lixi" style="top:150px;left:170px" onclick="clickLixi(this,1)"></div>
+    <div class="lixi" style="top:220px;left:230px" onclick="clickLixi(this,2)"></div>
+    <div class="lixi" style="top:110px;left:100px" onclick="clickLixi(this,3)"></div>
+    <div class="lixi" style="top:140px;left:260px" onclick="clickLixi(this,4)"></div>
 </div>
 
 <div class="popup" id="popup">
     <h3 id="question"></h3>
     <div id="answers"></div>
-    <button onclick="closePopup()">Đóng</button>
 </div>
 
 <script>
-// Hoa đào rơi
-for(let i=0;i<30;i++){
+// Tạo mặt trước sau cho lì xì
+document.querySelectorAll(".lixi").forEach(l=>{
+    l.innerHTML=`<div class="card front">LỘC</div>
+                 <div class="card back"></div>`;
+});
+
+// Hoa rơi
+for(let i=0;i<40;i++){
     let f=document.createElement("div");
     f.className="flower";
     f.style.left=Math.random()*100+"vw";
@@ -166,75 +208,97 @@ for(let i=0;i<30;i++){
     document.body.appendChild(f);
 }
 
+// Đếm ngược
+function countdown(){
+    let now=new Date();
+    let newYear=new Date(now.getFullYear()+1,0,1);
+    let diff=newYear-now;
+    let d=Math.floor(diff/1000);
+    document.getElementById("countdown").innerText=
+    "Đếm ngược năm mới: "+d+" giây";
+}
+setInterval(countdown,1000);
+
 // Câu hỏi
 const questions=[
-{
-q:"Tết năm nay là năm con gì?",
-a:["Rồng","Mèo","Hổ"],
-correct:0
-},
-{
-q:"Tết ăn bánh gì?",
-a:["Bánh chưng","Pizza","Hamburger"],
-correct:0
-},
-{
-q:"Màu của lì xì là gì?",
-a:["Đỏ","Xanh","Đen"],
-correct:0
-},
-{
-q:"Chúc Tết thường nói gì?",
-a:["Chúc mừng năm mới","Buồn ngủ quá","Đi ngủ thôi"],
-correct:0
-},
-{
-q:"Hoa đặc trưng miền Bắc ngày Tết?",
-a:["Hoa đào","Hoa hồng","Hoa lan"],
-correct:0
-}
+{q:"Tết ăn gì?",a:["Bánh chưng","Pizza"],c:0},
+{q:"Hoa Tết miền Bắc?",a:["Hoa đào","Hoa cúc"],c:0},
+{q:"Màu lì xì?",a:["Đỏ","Đen"],c:0},
+{q:"Chúc Tết nói gì?",a:["Chúc mừng năm mới","Bye"],c:0},
+{q:"Tết là dịp gì?",a:["Đoàn viên","Đi học"],c:0},
 ];
 
-function showQuestion(index){
-    document.getElementById("popup").style.display="block";
+function clickLixi(el,index){
+    if(el.classList.contains("locked")) return;
+
+    el.classList.add("shake");
+    setTimeout(()=>el.classList.remove("shake"),300);
+    el.classList.add("open");
+
+    showQuestion(el,index);
+}
+
+function showQuestion(el,index){
+    let p=document.getElementById("popup");
+    p.style.display="block";
     document.getElementById("question").innerText=questions[index].q;
-    let ansDiv=document.getElementById("answers");
-    ansDiv.innerHTML="";
-    questions[index].a.forEach((ans,i)=>{
-        let btn=document.createElement("button");
-        btn.innerText=ans;
-        btn.onclick=()=>checkAnswer(index,i);
-        ansDiv.appendChild(btn);
+    let ans=document.getElementById("answers");
+    ans.innerHTML="";
+    questions[index].a.forEach((a,i)=>{
+        let b=document.createElement("button");
+        b.innerText=a;
+        b.onclick=()=>checkAnswer(el,index,i);
+        ans.appendChild(b);
     });
 }
 
-function closePopup(){
+function checkAnswer(el,qIndex,aIndex){
     document.getElementById("popup").style.display="none";
-}
+    el.classList.add("locked");
 
-function checkAnswer(qIndex,aIndex){
-    closePopup();
     let msg=document.getElementById("message");
     msg.style.display="block";
 
-    if(aIndex===questions[qIndex].correct){
-        msg.innerText=" Chúc Mừng Năm Mới ";
-        fireworkEffect();
+    if(aIndex===questions[qIndex].c){
+        msg.innerText="🎆 CHÚC MỪNG NĂM MỚI 🎆";
+        startFireworks();
     }else{
-        msg.innerText="Ahihi đồ ngốc ";
+        msg.innerText="Ahihi đồ ngốc 😆";
     }
 
-    setTimeout(()=>{msg.style.display="none";},3000);
+    setTimeout(()=>msg.style.display="none",3000);
 }
 
-function fireworkEffect(){
+// PHÁO HOA CANVAS
+let canvas=document.getElementById("fireworks");
+let ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+function startFireworks(){
+    for(let i=0;i<20;i++){
+        let x=Math.random()*canvas.width;
+        let y=Math.random()*canvas.height/2;
+        explode(x,y);
+    }
+}
+
+function explode(x,y){
     for(let i=0;i<50;i++){
-        let f=document.createElement("div");
-        f.className="firework";
-        f.style.left=Math.random()*100+"vw";
-        f.style.top=Math.random()*100+"vh";
-        document.body.appendChild(f);
-        setTimeout(()=>f.remove(),1000);
+        let angle=Math.random()*2*Math.PI;
+        let speed=Math.random()*4;
+        let dx=Math.cos(angle)*speed;
+        let dy=Math.sin(angle)*speed;
+        let life=50;
+
+        let particle=setInterval(()=>{
+            ctx.fillStyle="hsl("+Math.random()*360+",100%,50%)";
+            ctx.fillRect(x,y,3,3);
+            x+=dx;
+            y+=dy;
+            life--;
+            if(life<=0) clearInterval(particle);
+        },20);
     }
 }
 </script>
