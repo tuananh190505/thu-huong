@@ -3,26 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Game Tết 3D</title>
+<title>Mini Game Tết</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-    margin:0;
     overflow:hidden;
-    background:linear-gradient(to bottom,#ff9a9e,#ff4d6d);
     font-family:Arial, sans-serif;
-    perspective:1000px;
+    background:linear-gradient(to bottom,#ff758c,#ff3d6d);
 }
 
 /* Đếm ngược */
 #countdown{
     position:fixed;
     top:10px;
-    left:50%;
-    transform:translateX(-50%);
+    width:100%;
+    text-align:center;
     color:white;
     font-weight:bold;
-    font-size:18px;
+    font-size:14px;
     z-index:5;
 }
 
@@ -32,28 +31,29 @@ body{
     bottom:0;
     left:50%;
     transform:translateX(-50%);
-    width:350px;
-    height:450px;
+    width:260px;
+    height:360px;
 }
 
 .trunk{
     position:absolute;
     bottom:0;
-    left:160px;
+    left:115px;
     width:30px;
-    height:220px;
-    background:#5c3d2e;
+    height:170px;
+    background:linear-gradient(#5c3d2e,#3e2723);
     border-radius:10px;
 }
 
 .leaves{
     position:absolute;
-    bottom:180px;
-    width:350px;
-    height:280px;
-    background:radial-gradient(circle,pink 40%,#ff69b4);
+    bottom:140px;
+    width:260px;
+    height:220px;
+    background:radial-gradient(circle at 50% 40%,#ffc1e3,#ff69b4);
     border-radius:50%;
-    animation:sway 4s infinite alternate ease-in-out;
+    animation:sway 5s infinite alternate ease-in-out;
+    box-shadow:0 0 30px rgba(255,105,180,0.6);
 }
 
 @keyframes sway{
@@ -64,11 +64,10 @@ body{
 /* Lì xì */
 .lixi{
     position:absolute;
-    width:70px;
-    height:100px;
+    width:55px;
+    height:80px;
     transform-style:preserve-3d;
-    transition:transform 0.6s;
-    cursor:pointer;
+    transition:transform .6s;
 }
 
 .lixi.open{
@@ -76,7 +75,7 @@ body{
 }
 
 .lixi.locked{
-    opacity:0.4;
+    opacity:.5;
     pointer-events:none;
 }
 
@@ -85,33 +84,23 @@ body{
     width:100%;
     height:100%;
     backface-visibility:hidden;
-    border-radius:10px;
+    border-radius:8px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:bold;
+    font-size:14px;
 }
 
 .front{
-    background:red;
+    background:linear-gradient(#ff0000,#b30000);
     color:gold;
+    box-shadow:0 4px 10px rgba(0,0,0,.4);
 }
 
 .back{
     background:gold;
     transform:rotateY(180deg);
-}
-
-/* Rung */
-.shake{
-    animation:shake 0.3s;
-}
-@keyframes shake{
-    0%{transform:translateX(0);}
-    25%{transform:translateX(-5px);}
-    50%{transform:translateX(5px);}
-    75%{transform:translateX(-5px);}
-    100%{transform:translateX(0);}
 }
 
 /* Popup */
@@ -122,29 +111,36 @@ body{
     left:50%;
     transform:translate(-50%,-50%);
     background:white;
-    padding:20px;
-    border-radius:15px;
-    z-index:10;
-    width:300px;
+    padding:15px;
+    border-radius:12px;
+    width:85%;
+    max-width:300px;
     text-align:center;
+    z-index:10;
 }
 
 .popup button{
     margin:5px;
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    background:#ff4d6d;
+    color:white;
 }
 
 /* Hoa rơi */
 .flower{
     position:absolute;
-    top:-20px;
-    width:8px;
-    height:8px;
+    width:6px;
+    height:6px;
     background:white;
     border-radius:50%;
+    opacity:.8;
     animation:fall linear infinite;
 }
 
 @keyframes fall{
+    from{transform:translateY(-10px);}
     to{transform:translateY(100vh);}
 }
 
@@ -162,11 +158,12 @@ canvas{
     top:30%;
     width:100%;
     text-align:center;
-    font-size:30px;
+    font-size:22px;
     color:yellow;
     font-weight:bold;
     display:none;
     z-index:6;
+    text-shadow:0 0 10px orange;
 }
 </style>
 </head>
@@ -177,52 +174,35 @@ canvas{
 <div id="message"></div>
 <canvas id="fireworks"></canvas>
 
-<audio id="bgmusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
 <div class="tree">
     <div class="trunk"></div>
     <div class="leaves"></div>
 
-    <div class="lixi" style="top:200px;left:80px"></div>
-    <div class="lixi" style="top:150px;left:170px"></div>
-    <div class="lixi" style="top:220px;left:230px"></div>
-    <div class="lixi" style="top:110px;left:100px"></div>
-    <div class="lixi" style="top:140px;left:260px"></div>
+    <div class="lixi" style="top:180px;left:50px"></div>
+    <div class="lixi" style="top:130px;left:130px"></div>
+    <div class="lixi" style="top:190px;left:180px"></div>
+    <div class="lixi" style="top:100px;left:90px"></div>
+    <div class="lixi" style="top:120px;left:200px"></div>
 </div>
 
 <div class="popup" id="popup">
-    <h3 id="question"></h3>
+    <h4 id="question"></h4>
     <div id="answers"></div>
     <button onclick="closePopup()">Đóng</button>
 </div>
 
 <script>
 
-/* ======= FIX NHẠC TỰ PHÁT ======= */
-document.body.addEventListener("click",()=>{
-    document.getElementById("bgmusic").play();
-},{once:true});
-
-/* ======= TẠO LÌ XÌ ======= */
-document.querySelectorAll(".lixi").forEach((l,i)=>{
-    l.innerHTML=`
-        <div class="card front">LỘC</div>
-        <div class="card back"></div>`;
-    l.onclick=()=>clickLixi(l,i);
-});
-
-/* ======= HOA RƠI ======= */
-for(let i=0;i<40;i++){
+/* ===== HOA RƠI MƯỢT ===== */
+for(let i=0;i<25;i++){
     let f=document.createElement("div");
     f.className="flower";
     f.style.left=Math.random()*100+"vw";
-    f.style.animationDuration=3+Math.random()*5+"s";
+    f.style.animationDuration=4+Math.random()*6+"s";
     document.body.appendChild(f);
 }
 
-/* ======= ĐẾM NGƯỢC ======= */
+/* ===== ĐẾM NGƯỢC ===== */
 function updateCountdown(){
     let now=new Date();
     let newYear=new Date(now.getFullYear()+1,0,1);
@@ -234,12 +214,12 @@ function updateCountdown(){
     let seconds=Math.floor((diff/1000)%60);
 
     document.getElementById("countdown").innerText=
-    `Đếm ngược: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    `Còn ${days} ngày ${hours} giờ ${minutes} phút ${seconds} giây đến năm mới`;
 }
 setInterval(updateCountdown,1000);
 updateCountdown();
 
-/* ======= CÂU HỎI ======= */
+/* ===== LÌ XÌ ===== */
 const questions=[
 {q:"Tết ăn gì?",a:["Bánh chưng","Pizza"],c:0},
 {q:"Hoa Tết miền Bắc?",a:["Hoa đào","Hoa cúc"],c:0},
@@ -248,13 +228,16 @@ const questions=[
 {q:"Tết là dịp gì?",a:["Đoàn viên","Đi học"],c:0},
 ];
 
-function clickLixi(el,index){
+document.querySelectorAll(".lixi").forEach((l,i)=>{
+    l.innerHTML=`
+        <div class="card front">LỘC</div>
+        <div class="card back"></div>`;
+    l.onclick=()=>openLixi(l,i);
+});
+
+function openLixi(el,index){
     if(el.classList.contains("locked")) return;
-
-    el.classList.add("shake");
-    setTimeout(()=>el.classList.remove("shake"),300);
     el.classList.add("open");
-
     showQuestion(el,index);
 }
 
@@ -262,6 +245,7 @@ function showQuestion(el,index){
     let popup=document.getElementById("popup");
     popup.style.display="block";
     document.getElementById("question").innerText=questions[index].q;
+
     let ans=document.getElementById("answers");
     ans.innerHTML="";
     questions[index].a.forEach((text,i)=>{
@@ -290,10 +274,10 @@ function checkAnswer(el,qIndex,aIndex){
         msg.innerText="Ahihi đồ ngốc 😆";
     }
 
-    setTimeout(()=>msg.style.display="none",3000);
+    setTimeout(()=>msg.style.display="none",2500);
 }
 
-/* ======= PHÁO HOA CHUẨN CANVAS ======= */
+/* ===== PHÁO HOA MOBILE MƯỢT ===== */
 const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 
@@ -307,26 +291,30 @@ window.addEventListener("resize",resizeCanvas);
 let particles=[];
 
 function launchFirework(){
-    for(let i=0;i<100;i++){
+    let x=Math.random()*canvas.width;
+    let y=Math.random()*canvas.height/2;
+
+    for(let i=0;i<60;i++){
         particles.push({
-            x:canvas.width/2,
-            y:canvas.height/2,
+            x:x,
+            y:y,
             angle:Math.random()*2*Math.PI,
-            speed:Math.random()*5+2,
-            life:100
+            speed:Math.random()*4+1,
+            life:60
         });
     }
 }
 
 function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="rgba(0,0,0,0.1)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
     particles.forEach((p,i)=>{
         p.x+=Math.cos(p.angle)*p.speed;
         p.y+=Math.sin(p.angle)*p.speed;
         p.life--;
 
-        ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+        ctx.fillStyle=`hsl(${Math.random()*360},100%,60%)`;
         ctx.fillRect(p.x,p.y,3,3);
 
         if(p.life<=0) particles.splice(i,1);
