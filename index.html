@@ -216,7 +216,7 @@ let tree=document.getElementById("tree");
 questions.forEach((q,index)=>{
     let l=document.createElement("div");
     l.className="lixi";
-    l.innerText="LỘC";
+    l.innerText="LỘC,PHÚC,THỌ,AN,TÀI";
     l.style.top=(50+Math.random()*250)+"px";
     l.style.left=(20+Math.random()*260)+"px";
     l.onclick=()=>openQuestion(l,index);
@@ -255,10 +255,10 @@ function checkAnswer(el,qIndex,aIndex){
     msg.style.display="block";
 
     if(aIndex===questions[qIndex].c){
-        msg.innerText="🎆 CHÚC MỪNG NĂM MỚI 🎆";
+        msg.innerText=" CHÚC MỪNG NĂM MỚI ";
         launchFirework();
     }else{
-        msg.innerText="Ahihi đồ ngốc 😆";
+        msg.innerText="Câu trả lời không chính xác.";
     }
 
     setTimeout(()=>msg.style.display="none",2500);
